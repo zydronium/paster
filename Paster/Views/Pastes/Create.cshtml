@@ -1,0 +1,98 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>@ViewBag.page_title</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <!-- 6paster, 2011. See http://p.6core.net/about.html for info and download -->
+    <style type="text/css">
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 11pt;
+            background-color: #dedede;
+            margin-top: 40px;
+        }
+
+        textarea {
+            border: 1px solid #000000;
+            font-family: "Courier New", "Courier", monospace;
+        }
+
+        input {
+            margin-top: 10px;
+        }
+
+        div#content {
+            width: 600px;
+            margin: auto;
+        }
+
+        div#footer {
+            width: 600px;
+            margin: auto;
+            font-size: 10px;
+            color: #555555;
+        }
+
+        div.text {
+            margin-top: 20px;
+            padding: 3px;
+            background-color: #eeeeee;
+            font-size: 10px;
+            color: #222222;
+        }
+
+        h1 {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        h2 {
+            font-size: 14px;
+            color: #555555;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body onload="document.postform.content.focus();">
+    <div id="content">
+        <!-- no need for CSRF protection, cross-posting is a feature here -->
+        <form name="postform" method="post" action="">
+            <h1>
+                Enter the text you want to share
+            </h1>
+            <h2>
+                @{
+                    int maxLength = Int32.Parse(ViewBag.paste_max_chars) / 1024;
+                    string output = String.Format("{0}k chars max", maxLength);
+                }
+                @output
+            </h2>
+            <textarea name="content" rows="30" cols="82"></textarea><br />
+            Time to live: <select name="ttl">
+                <option value="3600">1 hour</option>
+                <option value="14400">4 hours</option>
+                <option value="86400" selected="selected">1 day</option>
+                <option value="604800">1 week</option>
+                <option value="2592000">30 days</option>
+            </select>
+            <br />
+            <input value="Save" type="submit" />
+            <div class="text">
+                Hint 1 : put the following oneliner in your .bashrc to use "6p &lt;file&gt;" or "echo hi | 6p" or "cat &lt;&lt; EOF | 6p" (thanks, Habbie and Reinhart):<br /><br />
+                <code>6p() { curl -s -F "content=&lt;${1--}" -F ttl=604800 -w "%{redirect_url}\n" -o /dev/null @ViewBag.server_name }</code>
+            </div>
+        </form>
+    </div>
+    <br />
+    <div id="footer">
+        <hr />
+        This is Paster.NET a <a href="https://p.6core.net/about.html">6paster</a> clone.
+        <p>
+            The text you paste here will be reachable by a unique URL that is long enough to prevent brute-forcing. Also, these identifiers are randomly chosen. You post will remain on the server for at most 30 days.
+        </p>
+        <p>
+            @ViewBag.server_name and the author are not responsible for any content that is pasted here, nor the confidentiality of your data. Reliability of this service is not a right.
+        </p>
+    </div>
+</body>
+</html>
